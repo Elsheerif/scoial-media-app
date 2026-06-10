@@ -1,0 +1,27 @@
+{
+  "name": "scoial-media-app",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "start:dev": "concurrently \"tsc -w\" \"node --watch ./dist/main.js\""
+  },
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^25.9.2",
+    "concurrently": "^10.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.3",
+    "tsc": "^2.0.4",
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
+  }
+}
