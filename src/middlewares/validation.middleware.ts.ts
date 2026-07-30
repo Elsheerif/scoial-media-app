@@ -4,7 +4,7 @@ import { z, ZodType} from 'zod';
 
 type keyReqType= keyof Request;
 
-export function validation(validationSchema:Record<keyReqType, ZodType>) {
+export function validation(validationSchema: Partial<Record<keyReqType, ZodType>>) {
     return (req: Request, res: Response, next: NextFunction) => {
         const validationErrors: any[] = [];
 

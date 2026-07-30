@@ -1,0 +1,83 @@
+{
+  "info": {
+    "name": "social-media-app-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\",\n  \"confirmPassword\": \"Password123!\"\n}"
+        },
+        "url": { "raw": "http://localhost:3000/auth/signup", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","signup"] }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","login"] }
+      }
+    },
+    {
+      "name": "Confirm Email",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:3000/auth/confirm?token={{token}}", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","confirm"], "query": [{"key":"token","value":"{{token}}"}] }
+      }
+    },
+    {
+      "name": "Resend Confirmation",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/resend-confirmation", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","resend-confirmation"] }
+      }
+    },
+    {
+      "name": "Forgot Password",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/forgot-password", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","forgot-password"] }
+      }
+    },
+    {
+      "name": "Reset Password",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"NewPassword123!\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/reset-password", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","reset-password"] }
+      }
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/logout", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","logout"] }
+      }
+    },
+    {
+      "name": "Social Login",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"provider\": \"google\"\n}" },
+        "url": { "raw": "http://localhost:3000/auth/social-login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","social-login"] }
+      }
+    }
+  ]
+}

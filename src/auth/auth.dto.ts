@@ -1,7 +1,5 @@
 import { z } from 'zod';
-import sighnupschema from './auth.validation.js';
-
-
+import { sighnupschema } from './auth.validation.js';
 
 export interface loginDto {
     email: string;

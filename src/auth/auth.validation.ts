@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { commonValidationFields } from '../middlewares/validation.middleware.ts.js';
 
-const sighnupschema = {
+export const sighnupschema = {
     body: z.object({
-        username:commonValidationFields.username,
+        username: commonValidationFields.username,
         email: commonValidationFields.email,
         password: commonValidationFields.password,
         confirmPassword: commonValidationFields.confirmPassword,
@@ -14,4 +14,12 @@ const sighnupschema = {
 }
 
 
-export default sighnupschema;
+export const loginschema = {
+    body: z.object({
+        email: commonValidationFields.email,
+        password: commonValidationFields.password,
+
+    })
+}
+
+

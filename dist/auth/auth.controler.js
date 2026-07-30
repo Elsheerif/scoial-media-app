@@ -1,16 +1,48 @@
 import express from 'express';
 import authService from './auth.service.js';
 import successResponse from '../common/responces/success.responds.js';
+import authValidation from './auth.validation.js';
+import { validation } from '../middlewares/validation.middleware.ts.js';
 const Router = express.Router();
 Router.get('/', (req, res) => {
     return successResponse({ res }, 200, 'Auth route');
 });
-Router.post('/signup', async (req, res) => {
-    const result = authService.signUp(req.body);
+Router.post('/signup', validation({ body: authValidation.body }), async (req, res) => {
+    const result = await authService.signUp(req.body);
     return successResponse({ res }, 201, 'User created successfully', result);
 });
-Router.post('/login', (req, res) => {
-    const result = authService.login(req.body);
+Router.post('/login', validation({ body: authValidation.body }), async (req, res) => {
+    const result = await authService.login(req.body);
     return successResponse({ res }, 200, 'User logged in successfully', result);
+});
+Router.get('/confirm', async (req, res) => {
+    const token = String(req.query.token || '');
+    await authService.confirmEmail(token);
+    return successResponse({ res }, 200, 'Email confirmed');
+});
+Router.post('/resend-confirmation', async (req, res) => {
+    const { email } = req.body;
+    await authService.resendConfirmation(email);
+    return successResponse({ res }, 200, 'Confirmation email sent');
+});
+Router.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    await authService.forgotPassword(email);
+    return successResponse({ res }, 200, 'Password reset email sent');
+});
+Router.post('/reset-password', async (req, res) => {
+    const { token, newPassword } = req.body;
+    await authService.resetPassword(token, newPassword);
+    return successResponse({ res }, 200, 'Password updated');
+});
+Router.post('/logout', async (req, res) => {
+    const { refreshToken } = req.body;
+    await authService.logout(refreshToken);
+    return successResponse({ res }, 200, 'Logged out');
+});
+Router.post('/social-login', async (req, res) => {
+    const { email, username, provider, picture } = req.body;
+    const result = await authService.socialLogin({ email, username, provider, picture });
+    return successResponse({ res }, 200, 'Social login success', result);
 });
 export default Router;

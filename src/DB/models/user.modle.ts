@@ -1,7 +1,8 @@
 import { Schema, model, connect } from 'mongoose';
 import { HydratedDocument } from 'mongoose';
+import { RoleEnum } from "../../common/enums/user.enums.js";
 
-// 1. Create an interface representing a document in MongoDB.
+
 interface IUser {
     username: string;
     email: string;
@@ -13,7 +14,7 @@ interface IUser {
     age?: number;
     phoneNumber?: string;
     gender?: string;
-    role: string;
+    role: RoleEnum;
 }
 
 export type IHUser = HydratedDocument<IUser>; 
@@ -30,7 +31,7 @@ const userSchema = new Schema<IUser>({
     age: { type: Number },
     phoneNumber: { type: String },
     gender: { type: String },
-    role: { type: String, default: 'user' }
+    role: { type: String, enum: Object.values(RoleEnum), default: RoleEnum.USER }
 
 });
 
