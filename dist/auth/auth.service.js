@@ -162,6 +162,8 @@ class AuthService {
         let user = await this._userRepo.findOne({ filter: { email } });
         if (!user) {
             const [created] = await this._userRepo.create({ data: [{ email, username: username || email.split('@')[0], provider, confirmEmail: true, password: Math.random().toString(36), role: RoleEnum.USER, profilePicture: picture }] });
+            if (!created)
+                throw new Error('Failed to create social user');
             user = created;
         }
         const tokens = this._tokenService.generateAccessAndRefreshTokens(user);

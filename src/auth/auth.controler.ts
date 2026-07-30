@@ -3,7 +3,7 @@ import authService from './auth.service.js';
 import successResponse from '../common/responces/success.responds.js';
 import { loginDto } from './auth.dto.js';
 import { sighnupschema, loginschema } from './auth.validation.js';
-import { validation } from '../middlewares/validation.middleware.ts.js';
+import { validation } from '../middlewares/validation.middleware.js';
 
 const Router = express.Router();
 

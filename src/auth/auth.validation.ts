@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { commonValidationFields } from '../middlewares/validation.middleware.ts.js';
+import { commonValidationFields } from '../middlewares/validation.middleware.js';
 
 export const sighnupschema = {
     body: z.object({

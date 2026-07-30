@@ -1,17 +1,17 @@
 import express from 'express';
 import authService from './auth.service.js';
 import successResponse from '../common/responces/success.responds.js';
-import authValidation from './auth.validation.js';
-import { validation } from '../middlewares/validation.middleware.ts.js';
+import { sighnupschema, loginschema } from './auth.validation.js';
+import { validation } from '../middlewares/validation.middleware.js';
 const Router = express.Router();
 Router.get('/', (req, res) => {
     return successResponse({ res }, 200, 'Auth route');
 });
-Router.post('/signup', validation({ body: authValidation.body }), async (req, res) => {
+Router.post('/signup', validation({ body: sighnupschema.body }), async (req, res) => {
     const result = await authService.signUp(req.body);
     return successResponse({ res }, 201, 'User created successfully', result);
 });
-Router.post('/login', validation({ body: authValidation.body }), async (req, res) => {
+Router.post('/login', validation({ body: loginschema.body }), async (req, res) => {
     const result = await authService.login(req.body);
     return successResponse({ res }, 200, 'User logged in successfully', result);
 });

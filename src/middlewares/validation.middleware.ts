@@ -9,7 +9,9 @@ export function validation(validationSchema: Partial<Record<keyReqType, ZodType>
         const validationErrors: any[] = [];
 
         for (const key of Object.keys(validationSchema)as keyReqType[]) {
-            const validationResult = validationSchema[key].safeParse(
+            const schema = validationSchema[key];
+            if (!schema) continue;
+            const validationResult = schema.safeParse(
                 req[key as keyof Request]
             );
 

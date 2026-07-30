@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import { MAIL_USER, MAIL_PASS } from '../config/config.service.js';
 
 class MailService {
-    private transporter: nodemailer.Transporter;
+    private transporter: any;
 
     constructor() {
         this.transporter = nodemailer.createTransport({

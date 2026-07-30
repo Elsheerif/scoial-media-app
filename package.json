@@ -17,6 +17,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^25.9.2",
+    "@types/nodemailer": "^8.0.1",
+    "@types/ioredis": "^5.0.0",
     "concurrently": "^10.0.3",
     "crypto-js": "^4.2.0"
   },
@@ -28,7 +30,6 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.3",
     "nodemailer": "^9.0.3",
-    "tsc": "^2.0.4",
     "typescript": "^6.0.3",
     "zod": "^4.4.3"
   }
