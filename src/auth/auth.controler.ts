@@ -29,14 +29,14 @@ Router.get('/confirm', async (req: express.Request, res: express.Response) => {
 
 Router.post('/resend-confirmation', async (req: express.Request, res: express.Response) => {
     const { email } = req.body;
-    await authService.resendConfirmation(email);
-    return successResponse({ res }, 200, 'Confirmation email sent');
+    const result = await authService.resendConfirmation(email);
+    return successResponse({ res }, 200, 'Confirmation email sent', result);
 });
 
 Router.post('/forgot-password', async (req: express.Request, res: express.Response) => {
     const { email } = req.body;
-    await authService.forgotPassword(email);
-    return successResponse({ res }, 200, 'Password reset email sent');
+    const result = await authService.forgotPassword(email);
+    return successResponse({ res }, 200, 'Password reset email sent', result);
 });
 
 Router.post('/reset-password', async (req: express.Request, res: express.Response) => {

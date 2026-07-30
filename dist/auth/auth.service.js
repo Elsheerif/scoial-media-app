@@ -11,6 +11,21 @@ class AuthService {
     _userRepo = new UserRepo();
     _tokenService = TokenService;
     constructor() { }
+    createConfirmationToken(user) {
+        const { accessSignature } = this._tokenService.getSignature(user.role);
+        return this._tokenService.generateToken({
+            payload: {},
+            signature: accessSignature,
+            options: { subject: user._id.toString(), audience: [String(user.role), 'confirm'], expiresIn: 60 * 60 },
+        });
+    }
+    getTokenRole(token) {
+        const decoded = this._tokenService.decodeToken({ token });
+        const audience = Array.isArray(decoded?.aud) ? decoded.aud : [decoded?.aud];
+        if (audience?.[0] === RoleEnum.ADMIN)
+            return RoleEnum.ADMIN;
+        return RoleEnum.USER;
+    }
     async signUp(body) {
         const { email, password, phoneNumber } = body;
         const isEmail = await this._userRepo.findOne({
@@ -40,27 +55,21 @@ class AuthService {
         if (!user) {
             throw new Error("User creation failed");
         }
-        try {
-            const { accessSignature } = this._tokenService.getSignature(user.role);
-            const token = this._tokenService.generateToken({
-                payload: {},
-                signature: accessSignature,
-                options: { subject: user._id.toString(), expiresIn: 60 * 60 },
-            });
-            const appUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
-            const confirmLink = `${appUrl}/auth/confirm?token=${token}`;
-            await MailService.sendMail({
-                to: user.email,
-                subject: 'Confirm your email',
-                html: `Click <a href="${confirmLink}">here</a> to confirm your email`,
-            });
-        }
-        catch (err) { }
-        return user;
+        const token = this.createConfirmationToken(user);
+        const appUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
+        const confirmLink = `${appUrl}/auth/confirm?token=${token}`;
+        await MailService.sendMail({
+            to: user.email,
+            subject: 'Confirm your email',
+            html: `Click <a href="${confirmLink}">here</a> to confirm your email`,
+        });
+        return { user, confirmToken: token };
     }
     async confirmEmail(token) {
         try {
-            const decoded = this._tokenService.decodeToken({ token });
+            const role = this.getTokenRole(token);
+            const signature = this._tokenService.getSignature(role).accessSignature;
+            const decoded = this._tokenService.verifyToken({ token, signature });
             if (!decoded || !decoded.sub)
                 throw new BadRequestException('Invalid token');
             const userId = decoded.sub;
@@ -82,16 +91,11 @@ class AuthService {
             throw new NotFoundException('User not found');
         if (user.confirmEmail)
             throw new BadRequestException('Email already confirmed');
-        const { accessSignature } = this._tokenService.getSignature(user.role);
-        const token = this._tokenService.generateToken({
-            payload: {},
-            signature: accessSignature,
-            options: { subject: user._id.toString(), expiresIn: 60 * 60 },
-        });
+        const token = this.createConfirmationToken(user);
         const appUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
         const confirmLink = `${appUrl}/auth/confirm?token=${token}`;
         await MailService.sendMail({ to: user.email, subject: 'Resend confirmation', html: `Click <a href="${confirmLink}">here</a> to confirm your email` });
-        return true;
+        return { resendToken: token };
     }
     async login(body) {
         const { email, password } = body;
@@ -126,11 +130,13 @@ class AuthService {
         const appUrl = process.env.APP_URL || `http://localhost:${process.env.PORT || 3000}`;
         const resetLink = `${appUrl}/auth/reset-password?token=${token}`;
         await MailService.sendMail({ to: user.email, subject: 'Reset your password', html: `Click <a href="${resetLink}">here</a> to reset your password` });
-        return true;
+        return { resetToken: token };
     }
     async resetPassword(token, newPassword) {
         try {
-            const decoded = this._tokenService.decodeToken({ token });
+            const role = this.getTokenRole(token);
+            const signature = this._tokenService.getSignature(role).accessSignature;
+            const decoded = this._tokenService.verifyToken({ token, signature });
             if (!decoded || !decoded.sub)
                 throw new BadRequestException('Invalid token');
             const userId = decoded.sub;

@@ -6,9 +6,17 @@ export const sighnupschema = {
         email: commonValidationFields.email,
         password: commonValidationFields.password,
         confirmPassword: commonValidationFields.confirmPassword,
-        age: commonValidationFields.age,
-        gender: commonValidationFields.gender,
-        phoneNumber: commonValidationFields.phoneNumber
+        age: commonValidationFields.age.optional(),
+        gender: commonValidationFields.gender.optional(),
+        phoneNumber: commonValidationFields.phoneNumber.optional(),
+    }).superRefine((data, ctx) => {
+        if (data.password !== data.confirmPassword) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Passwords do not match',
+                path: ['confirmPassword'],
+            });
+        }
     })
 };
 export const loginschema = {
