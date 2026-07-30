@@ -3,6 +3,20 @@
     "name": "social-media-app-api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    { "key": "accessToken", "value": "" },
+    { "key": "adminAccessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "confirmToken", "value": "" },
+    { "key": "resetToken", "value": "" },
+    { "key": "resendToken", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "postId", "value": "" },
+    { "key": "commentId", "value": "" },
+    { "key": "storyId", "value": "" },
+    { "key": "notificationId", "value": "" },
+    { "key": "fcmToken", "value": "" }
+  ],
   "item": [
     {
       "name": "Signup",
@@ -198,6 +212,215 @@
           "body": "{\n  \"message\": \"Social login success\",\n  \"result\": {\n    \"user\": {\n      \"email\": \"john@example.com\",\n      \"provider\": \"google\"\n    },\n    \"access_token\": \"{{accessToken}}\",\n    \"refresh_token\": \"{{refreshToken}}\"\n  }\n}"
         }
       ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List users",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users" }
+        },
+        {
+          "name": "Get profile",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/me/profile" }
+        },
+        {
+          "name": "Get user by ID",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/{{userId}}" }
+        },
+        {
+          "name": "Update profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"username\": \"john-updated\",\n  \"profilePicture\": \"https://example.com/avatar.jpg\",\n  \"coverPicture\": \"https://example.com/cover.jpg\"\n}" },
+            "url": "http://localhost:3000/users/{{userId}}"
+          }
+        },
+        {
+          "name": "Update FCM token",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"fcmToken\": \"{{fcmToken}}\"\n}" },
+            "url": "http://localhost:3000/users/me/fcm-token"
+          }
+        },
+        {
+          "name": "Delete user",
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/{{userId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Posts and feed",
+      "item": [
+        {
+          "name": "Create post",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Hello from Postman\",\n  \"media\": [],\n  \"privacy\": \"public\"\n}" },
+            "url": "http://localhost:3000/posts"
+          }
+        },
+        {
+          "name": "Get news feed",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts?limit=20" }
+        },
+        {
+          "name": "Get dashboard (admin)",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/posts/dashboard" }
+        },
+        {
+          "name": "Get profile posts",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/profile/{{userId}}?limit=30" }
+        },
+        {
+          "name": "Get post",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}" }
+        },
+        {
+          "name": "Update post",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Updated post content\"\n}" },
+            "url": "http://localhost:3000/posts/{{postId}}"
+          }
+        },
+        {
+          "name": "React to post (toggle/change emoji)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"emoji\": \"❤️\"\n}" },
+            "url": "http://localhost:3000/posts/{{postId}}/reactions"
+          }
+        },
+        {
+          "name": "Delete post",
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Comments",
+      "item": [
+        {
+          "name": "Create comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Nice post!\"\n}" },
+            "url": "http://localhost:3000/posts/{{postId}}/comments"
+          }
+        },
+        {
+          "name": "List comments",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}/comments" }
+        },
+        {
+          "name": "Update comment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Updated comment\"\n}" },
+            "url": "http://localhost:3000/comments/{{commentId}}"
+          }
+        },
+        {
+          "name": "React to comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"emoji\": \"👍\"\n}" },
+            "url": "http://localhost:3000/comments/{{commentId}}/reactions"
+          }
+        },
+        {
+          "name": "Delete comment",
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/comments/{{commentId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Stories (24-hour)",
+      "item": [
+        {
+          "name": "Create story",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"mediaUrl\": \"https://example.com/story.jpg\",\n  \"type\": \"image\",\n  \"caption\": \"My story\"\n}" },
+            "url": "http://localhost:3000/stories"
+          }
+        },
+        {
+          "name": "List active stories",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories?limit=50" }
+        },
+        {
+          "name": "List user stories",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories/user/{{userId}}" }
+        },
+        {
+          "name": "Update story",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"caption\": \"Updated story\"\n}" },
+            "url": "http://localhost:3000/stories/{{storyId}}"
+          }
+        },
+        {
+          "name": "Delete story",
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories/{{storyId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "List my notifications",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/notifications" }
+        },
+        {
+          "name": "Mark notification read",
+          "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/notifications/{{notificationId}}/read" }
+        },
+        {
+          "name": "Create notification (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Announcement\",\n  \"message\": \"Welcome to the app\",\n  \"type\": \"info\",\n  \"recipientIds\": [\"{{userId}}\"],\n  \"sendPush\": true,\n  \"payload\": { \"screen\": \"home\" }\n}" },
+            "url": "http://localhost:3000/notifications"
+          }
+        },
+        {
+          "name": "List all notifications (admin)",
+          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/notifications/admin/all" }
+        },
+        {
+          "name": "Update notification (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Updated announcement\"\n}" },
+            "url": "http://localhost:3000/notifications/{{notificationId}}"
+          }
+        },
+        {
+          "name": "Delete notification (admin)",
+          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/notifications/{{notificationId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Health check",
+      "request": { "method": "GET", "url": "http://localhost:3000/health" }
     }
   ]
 }

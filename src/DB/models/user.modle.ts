@@ -14,6 +14,7 @@ interface IUser {
     age?: number;
     phoneNumber?: string;
     gender?: string;
+    fcmToken?: string;
     role: RoleEnum;
 }
 
@@ -31,6 +32,7 @@ const userSchema = new Schema<IUser>({
     age: { type: Number },
     phoneNumber: { type: String },
     gender: { type: String },
+    fcmToken: { type: String },
     role: { type: String, enum: Object.values(RoleEnum), default: RoleEnum.USER }
 
 });
