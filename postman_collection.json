@@ -1,11 +1,12 @@
-﻿{
+{
   "info": {
     "name": "social-media-app-api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "socketUrl", "value": "ws://localhost:3000" },
     { "key": "accessToken", "value": "" },
-    { "key": "adminAccessToken", "value": "" },
     { "key": "refreshToken", "value": "" },
     { "key": "confirmToken", "value": "" },
     { "key": "resetToken", "value": "" },
@@ -15,412 +16,116 @@
     { "key": "commentId", "value": "" },
     { "key": "storyId", "value": "" },
     { "key": "notificationId", "value": "" },
-    { "key": "fcmToken", "value": "" }
+    { "key": "chatId", "value": "" },
+    { "key": "groupId", "value": "" },
+    { "key": "messageId", "value": "" }
   ],
   "item": [
+    { "name": "Landing", "request": { "method": "GET", "url": "{{baseUrl}}/" } },
+    { "name": "Auth Route", "request": { "method": "GET", "url": "{{baseUrl}}/auth" } },
     {
-      "name": "Signup",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\",\n  \"confirmPassword\": \"Password123!\"\n}"
-        },
-        "url": { "raw": "http://localhost:3000/auth/signup", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","signup"] }
-      },
-      "response": [
-        {
-          "name": "Signup success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"username\": \"johndoe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\",\n  \"confirmPassword\": \"Password123!\"\n}"
-            },
-            "url": "http://localhost:3000/auth/signup"
-          },
-          "status": "Created",
-          "code": 201,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"User created successfully\",\n  \"result\": {\n    \"user\": {\n      \"username\": \"johndoe\",\n      \"email\": \"john@example.com\",\n      \"provider\": \"local\",\n      \"confirmEmail\": false,\n      \"role\": \"USER\"\n    },\n    \"confirmToken\": \"{{confirmToken}}\"\n  }\n}"
-        }
+      "name": "Auth",
+      "item": [
+        { "name": "Signup", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"username\":\"johndoe\",\"email\":\"john@example.com\",\"password\":\"Password123!\",\"confirmPassword\":\"Password123!\"}" }, "url": "{{baseUrl}}/auth/signup" } },
+        { "name": "Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"john@example.com\",\"password\":\"Password123!\"}" }, "url": "{{baseUrl}}/auth/login" } },
+        { "name": "Confirm Email", "request": { "method": "GET", "url": "{{baseUrl}}/auth/confirm?token={{confirmToken}}" } },
+        { "name": "Resend Confirmation", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"john@example.com\"}" }, "url": "{{baseUrl}}/auth/resend-confirmation" } },
+        { "name": "Forgot Password", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"john@example.com\"}" }, "url": "{{baseUrl}}/auth/forgot-password" } },
+        { "name": "Reset Password", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"token\":\"{{resetToken}}\",\"newPassword\":\"NewPassword123!\"}" }, "url": "{{baseUrl}}/auth/reset-password" } },
+        { "name": "Logout", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"refreshToken\":\"{{refreshToken}}\"}" }, "url": "{{baseUrl}}/auth/logout" } },
+        { "name": "Social Login", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"email\":\"john@example.com\",\"username\":\"johndoe\",\"provider\":\"google\",\"picture\":\"https://example.com/avatar.png\"}" }, "url": "{{baseUrl}}/auth/social-login" } }
       ]
     },
     {
-      "name": "Login",
+      "name": "GraphQL",
       "request": {
         "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","login"] }
-      },
-      "response": [
-        {
-          "name": "Login success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\"\n}" },
-            "url": "http://localhost:3000/auth/login"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"User logged in successfully\",\n  \"result\": {\n    \"user\": {\n      \"email\": \"john@example.com\",\n      \"confirmEmail\": true\n    },\n    \"access_token\": \"{{accessToken}}\",\n    \"refresh_token\": \"{{refreshToken}}\"\n  }\n}"
-        }
-      ]
-    },
-    {
-      "name": "Confirm Email",
-      "request": {
-        "method": "GET",
-        "url": { "raw": "http://localhost:3000/auth/confirm?token={{confirmToken}}", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","confirm"], "query": [{"key":"token","value":"{{confirmToken}}"}] }
-      },
-      "response": [
-        {
-          "name": "Confirm success",
-          "originalRequest": { "method": "GET", "url": "http://localhost:3000/auth/confirm?token={{confirmToken}}" },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Email confirmed\"\n}"
-        }
-      ]
-    },
-    {
-      "name": "Resend Confirmation",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/resend-confirmation", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","resend-confirmation"] }
-      },
-      "response": [
-        {
-          "name": "Resend confirmation success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
-            "url": "http://localhost:3000/auth/resend-confirmation"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Confirmation email sent\",\n  \"result\": {\n    \"resendToken\": \"{{resendToken}}\"\n  }\n}"
-        }
-      ]
-    },
-    {
-      "name": "Forgot Password",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/forgot-password", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","forgot-password"] }
-      },
-      "response": [
-        {
-          "name": "Forgot password success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\"\n}" },
-            "url": "http://localhost:3000/auth/forgot-password"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Password reset email sent\",\n  \"result\": {\n    \"resetToken\": \"{{resetToken}}\"\n  }\n}"
-        }
-      ]
-    },
-    {
-      "name": "Reset Password",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"NewPassword123!\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/reset-password", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","reset-password"] }
-      },
-      "response": [
-        {
-          "name": "Reset password success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"newPassword\": \"NewPassword123!\"\n}" },
-            "url": "http://localhost:3000/auth/reset-password"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Password updated\"\n}"
-        }
-      ]
-    },
-    {
-      "name": "Logout",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/logout", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","logout"] }
-      },
-      "response": [
-        {
-          "name": "Logout success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" },
-            "url": "http://localhost:3000/auth/logout"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Logged out\"\n}"
-        }
-      ]
-    },
-    {
-      "name": "Social Login",
-      "request": {
-        "method": "POST",
-        "header": [ { "key": "Content-Type", "value": "application/json" } ],
-        "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"provider\": \"google\"\n}" },
-        "url": { "raw": "http://localhost:3000/auth/social-login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["auth","social-login"] }
-      },
-      "response": [
-        {
-          "name": "Social login success",
-          "originalRequest": {
-            "method": "POST",
-            "header": [ { "key": "Content-Type", "value": "application/json" } ],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"john@example.com\",\n  \"provider\": \"google\"\n}" },
-            "url": "http://localhost:3000/auth/social-login"
-          },
-          "status": "OK",
-          "code": 200,
-          "_postman_previewlanguage": "json",
-          "body": "{\n  \"message\": \"Social login success\",\n  \"result\": {\n    \"user\": {\n      \"email\": \"john@example.com\",\n      \"provider\": \"google\"\n    },\n    \"access_token\": \"{{accessToken}}\",\n    \"refresh_token\": \"{{refreshToken}}\"\n  }\n}"
-        }
-      ]
+        "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{accessToken}}" }],
+        "body": { "mode": "raw", "raw": "{\"query\":\"query { me { id username } chats { id participants { id username } } groups { id name } }\"}" },
+        "url": "{{baseUrl}}/graphql"
+      }
     },
     {
       "name": "Users",
       "item": [
-        {
-          "name": "List users",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users" }
-        },
-        {
-          "name": "Get profile",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/me/profile" }
-        },
-        {
-          "name": "Get user by ID",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/{{userId}}" }
-        },
-        {
-          "name": "Update profile",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"username\": \"john-updated\",\n  \"profilePicture\": \"https://example.com/avatar.jpg\",\n  \"coverPicture\": \"https://example.com/cover.jpg\"\n}" },
-            "url": "http://localhost:3000/users/{{userId}}"
-          }
-        },
-        {
-          "name": "Update FCM token",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"fcmToken\": \"{{fcmToken}}\"\n}" },
-            "url": "http://localhost:3000/users/me/fcm-token"
-          }
-        },
-        {
-          "name": "Delete user",
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/users/{{userId}}" }
-        }
+        { "name": "Get Users", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/users" } },
+        { "name": "Get User", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/users/{{userId}}" } },
+        { "name": "Get My Profile", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/users/me/profile" } },
+        { "name": "Update User", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"username\":\"updated-name\"}" }, "url": "{{baseUrl}}/users/{{userId}}" } },
+        { "name": "Update FCM Token", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"fcmToken\":\"device-token\"}" }, "url": "{{baseUrl}}/users/me/fcm-token" } },
+        { "name": "Delete User", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/users/{{userId}}" } }
       ]
     },
     {
-      "name": "Posts and feed",
+      "name": "Posts",
       "item": [
-        {
-          "name": "Create post",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Hello from Postman\",\n  \"media\": [],\n  \"privacy\": \"public\"\n}" },
-            "url": "http://localhost:3000/posts"
-          }
-        },
-        {
-          "name": "Get news feed",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts?limit=20" }
-        },
-        {
-          "name": "Get dashboard (admin)",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/posts/dashboard" }
-        },
-        {
-          "name": "Get profile posts",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/profile/{{userId}}?limit=30" }
-        },
-        {
-          "name": "Get post",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}" }
-        },
-        {
-          "name": "Update post",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Updated post content\"\n}" },
-            "url": "http://localhost:3000/posts/{{postId}}"
-          }
-        },
-        {
-          "name": "React to post (toggle/change emoji)",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"emoji\": \"❤️\"\n}" },
-            "url": "http://localhost:3000/posts/{{postId}}/reactions"
-          }
-        },
-        {
-          "name": "Delete post",
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}" }
-        }
+        { "name": "Create Post", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"content\":\"Hello from the social app\",\"privacy\":\"public\"}" }, "url": "{{baseUrl}}/posts" } },
+        { "name": "Get Feed", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts?limit=20" } },
+        { "name": "Get Profile Posts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts/profile/{{userId}}" } },
+        { "name": "Get Post", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts/{{postId}}" } },
+        { "name": "Update Post", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"content\":\"Updated post\"}" }, "url": "{{baseUrl}}/posts/{{postId}}" } },
+        { "name": "Delete Post", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts/{{postId}}" } },
+        { "name": "React To Post", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"emoji\":\"👍\"}" }, "url": "{{baseUrl}}/posts/{{postId}}/reactions" } },
+        { "name": "Admin Dashboard", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts/dashboard" } }
       ]
     },
     {
       "name": "Comments",
       "item": [
-        {
-          "name": "Create comment",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Nice post!\"\n}" },
-            "url": "http://localhost:3000/posts/{{postId}}/comments"
-          }
-        },
-        {
-          "name": "List comments",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/posts/{{postId}}/comments" }
-        },
-        {
-          "name": "Update comment",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"text\": \"Updated comment\"\n}" },
-            "url": "http://localhost:3000/comments/{{commentId}}"
-          }
-        },
-        {
-          "name": "React to comment",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"emoji\": \"👍\"\n}" },
-            "url": "http://localhost:3000/comments/{{commentId}}/reactions"
-          }
-        },
-        {
-          "name": "Delete comment",
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/comments/{{commentId}}" }
-        }
+        { "name": "Create Comment", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"text\":\"Nice post\"}" }, "url": "{{baseUrl}}/posts/{{postId}}/comments" } },
+        { "name": "Get Comments", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/posts/{{postId}}/comments" } },
+        { "name": "Update Comment", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"text\":\"Updated comment\"}" }, "url": "{{baseUrl}}/comments/{{commentId}}" } },
+        { "name": "Delete Comment", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/comments/{{commentId}}" } },
+        { "name": "React To Comment", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"emoji\":\"❤️\"}" }, "url": "{{baseUrl}}/comments/{{commentId}}/reactions" } }
       ]
     },
     {
-      "name": "Stories (24-hour)",
+      "name": "Stories",
       "item": [
-        {
-          "name": "Create story",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"mediaUrl\": \"https://example.com/story.jpg\",\n  \"type\": \"image\",\n  \"caption\": \"My story\"\n}" },
-            "url": "http://localhost:3000/stories"
-          }
-        },
-        {
-          "name": "List active stories",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories?limit=50" }
-        },
-        {
-          "name": "List user stories",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories/user/{{userId}}" }
-        },
-        {
-          "name": "Update story",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"caption\": \"Updated story\"\n}" },
-            "url": "http://localhost:3000/stories/{{storyId}}"
-          }
-        },
-        {
-          "name": "Delete story",
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/stories/{{storyId}}" }
-        }
+        { "name": "Create Story", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"mediaUrl\":\"https://example.com/story.jpg\",\"type\":\"image\",\"caption\":\"Today\"}" }, "url": "{{baseUrl}}/stories" } },
+        { "name": "Get Active Stories", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/stories" } },
+        { "name": "Get User Stories", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/stories/user/{{userId}}" } },
+        { "name": "Update Story", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"caption\":\"Updated\"}" }, "url": "{{baseUrl}}/stories/{{storyId}}" } },
+        { "name": "Delete Story", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/stories/{{storyId}}" } }
       ]
     },
     {
       "name": "Notifications",
       "item": [
-        {
-          "name": "List my notifications",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/notifications" }
-        },
-        {
-          "name": "Mark notification read",
-          "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "http://localhost:3000/notifications/{{notificationId}}/read" }
-        },
-        {
-          "name": "Create notification (admin)",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Announcement\",\n  \"message\": \"Welcome to the app\",\n  \"type\": \"info\",\n  \"recipientIds\": [\"{{userId}}\"],\n  \"sendPush\": true,\n  \"payload\": { \"screen\": \"home\" }\n}" },
-            "url": "http://localhost:3000/notifications"
-          }
-        },
-        {
-          "name": "List all notifications (admin)",
-          "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/notifications/admin/all" }
-        },
-        {
-          "name": "Update notification (admin)",
-          "request": {
-            "method": "PATCH",
-            "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"message\": \"Updated announcement\"\n}" },
-            "url": "http://localhost:3000/notifications/{{notificationId}}"
-          }
-        },
-        {
-          "name": "Delete notification (admin)",
-          "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{adminAccessToken}}" }], "url": "http://localhost:3000/notifications/{{notificationId}}" }
-        }
+        { "name": "Create Notification", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"title\":\"Announcement\",\"message\":\"Welcome\",\"recipientIds\":[],\"sendPush\":false}" }, "url": "{{baseUrl}}/notifications" } },
+        { "name": "Get My Notifications", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/notifications" } },
+        { "name": "Get All Notifications", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/notifications/admin/all" } },
+        { "name": "Update Notification", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"message\":\"Updated announcement\"}" }, "url": "{{baseUrl}}/notifications/{{notificationId}}" } },
+        { "name": "Mark Notification Read", "request": { "method": "PATCH", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/notifications/{{notificationId}}/read" } },
+        { "name": "Delete Notification", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/notifications/{{notificationId}}" } }
       ]
     },
     {
-      "name": "Health check",
-      "request": { "method": "GET", "url": "http://localhost:3000/health" }
-    }
+      "name": "Chats",
+      "item": [
+        { "name": "Create Or Get Chat", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/chats/{{userId}}" } },
+        { "name": "Get User Chats", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/chats" } },
+        { "name": "Get Chat Messages", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/chats/{{chatId}}/messages" } },
+        { "name": "Send Message", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"content\":\"Hello\"}" }, "url": "{{baseUrl}}/chats/{{chatId}}/messages" } }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        { "name": "Create Group", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"name\":\"Project Team\",\"memberIds\":[\"{{userId}}\"]}" }, "url": "{{baseUrl}}/groups" } },
+        { "name": "Get User Groups", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/groups" } },
+        { "name": "Get Group Messages", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }], "url": "{{baseUrl}}/groups/{{groupId}}/messages" } },
+        { "name": "Send Group Message", "request": { "method": "POST", "header": [{ "key": "Authorization", "value": "Bearer {{accessToken}}" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\"content\":\"Group update\"}" }, "url": "{{baseUrl}}/groups/{{groupId}}/messages" } }
+      ]
+    },
+    {
+      "name": "Socket.IO",
+      "request": {
+        "method": "GET",
+        "description": "Connect with Socket.IO using auth.token={{accessToken}}. Events: chat:join {chatId}, chat:send {chatId,content}, group:join {groupId}, group:send {groupId,content}, chat:typing {chatId,isTyping}, group:typing {groupId,isTyping}. Listen for message:new, group_message:new, notification:new_message, notification:new_group_message.",
+        "url": "{{socketUrl}}/socket.io/?EIO=4&transport=websocket"
+      }
+    },
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } }
   ]
 }

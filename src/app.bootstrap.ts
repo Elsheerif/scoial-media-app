@@ -8,9 +8,15 @@ import storyRouter from './stories/story.controller.js';
 import globalerrorhandling from './middlewares/globalerr.middleware.js';
 import { SERVER_PORT } from './config/config.service.js';
 import testDBConnection from './DB/connection.js';
+import { expressMiddleware } from '@as-integrations/express5';
+import { graphqlServer, graphqlContextFromToken } from './graphql/schema.js';
+import { createServer } from 'node:http';
+import chatRouter from './chat/chat.controller.js';
+import groupRouter from './chat/group.controller.js';
+import { createSocketServer } from './socket/socket.server.js';
 
 
-function bootstrap() {
+async function bootstrap() {
 
 
 
@@ -33,7 +39,13 @@ function bootstrap() {
         });
     });
     app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+    await graphqlServer.start();
+    app.use('/graphql', expressMiddleware(graphqlServer, {
+        context: async ({ req }) => graphqlContextFromToken(req.headers.authorization),
+    }));
     app.use('/auth', authRouter);
+    app.use('/chats', chatRouter);
+    app.use('/groups', groupRouter);
     app.use('/users', userRouter);
     app.use('/posts', postRouter);
     app.use('/', commentRouter);
@@ -48,7 +60,9 @@ function bootstrap() {
         });
     });
 
-    app.listen(port, () => {
+    const httpServer = createServer(app);
+    createSocketServer(httpServer);
+    httpServer.listen(port, () => {
         console.log(`Server is running on port ${port}`);
     });
 
